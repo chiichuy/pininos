@@ -4,7 +4,7 @@ var Backbone   = require('backbone'),
     $          = require('jquery');
 
 module.exports = Backbone.View.extend({
-	el: $('#seccion'),
+	el: $('#todos'),
 	template: Handlebars.compile($('#todo-template').html()),
 	initialize: function(){
 		this.listenTo(this.collection, 'add',this.addOne,this);
@@ -16,6 +16,6 @@ module.exports = Backbone.View.extend({
 
 	addOne:function(todo){
 		var todoView = new TodoView({model:todo});
-		this.$el.append(todoView.render().el);
+		this.$el.prepend(todoView.render().el);
 	}
 });

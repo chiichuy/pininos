@@ -22,12 +22,13 @@ header
 		text-align center
 section
 	margin 0.5em 1em
-	article
-		background verde	
-		padding 1em 2em
-		border-radius 3em
-		color verdeFuerte
-		margin 1em auto
+	.todos
+		article
+			background verde	
+			padding 1em 2em
+			border-radius 3em
+			color verdeFuerte
+			margin 1em auto
 	.todo
 		margin 0.5em auto
 		input
@@ -41,8 +42,9 @@ section
 				outline: 0;
 @media screen and (min-width:1024px)
 	section
-		article
-			width 42%
-			display inline-block
-			&:nth-child(odd)
-				margin-left 1em
+		.todos
+			article
+				width 42%
+				display inline-block
+				&:nth-child(even)
+					margin-left 1em

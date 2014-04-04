@@ -43,9 +43,9 @@ header figure{max-width:100px;height:133px;margin:0 auto;box-shadow:0 0 20px #ff
 header figure img{height:100%;width:100%}
 header h1{color:rgba(255,255,255,.6);text-shadow:0 0 10px #fff;text-align:center}
 section{margin:.5em 1em}
-section article{background:#bfffc3;padding:1em 2em;border-radius:3em;color:#008f08;margin:1em auto}
+section .todos article{background:#bfffc3;padding:1em 2em;border-radius:3em;color:#008f08;margin:1em auto}
 section .todo{margin:.5em auto}
 section .todo input{width:100%;height:2em;font-size:1.7em;border:0;color:#008f08;border-bottom:1px solid #008f08}
 section .todo input:focus{outline:0}
-@media screen and (min-width:1024px){section article{width:42%;display:inline-block}
-section article:nth-child(odd){margin-left:1em}}
+@media screen and (min-width:1024px){section .todos article{width:42%;display:inline-block}
+section .todos article:nth-child(even){margin-left:1em}}
