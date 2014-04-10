@@ -57,20 +57,44 @@ module.exports = Backbone.Router.extend({
 		console.log("New todo");
 		this.todoForm = new TodoFormView({collection:this.todos});
 		console.log("despues todo");
-		var backboneSync = Backbone.sync;
-	    Backbone.sync = function (method, model, options) {
-	        options.headers = {'Authorization': 'Basic ' + btoa("chuy:chiichuy")};
-	        options.header = {'Authorization': 'Basic ' + btoa("chuy:chiichuy")};
+	    Backbone.sync = function (method, model) {
+	        var basic = 'Basic  ' + btoa("chuy:chiichuy");
+	       	var type = method; 
+		    var modelJSON = (method === 'create' || method === 'update') ?  
+		                    JSON.stringify(model.toJSON()) : null;  
+		  
+		    // Default JSON-request options.  
+		    var params = {  
+		     	url: model.url,  
+		     	data: modelJSON,
+			    type: "post",
+			    crossDomain: true,
+			    contentType: 'application/json',
+		        async: false,
+		        headers: {"Authorization": "Basic Y2h1eTpjaGlpY2h1eQ=="},
+		        headers: {"Authentication": "Basic Y2h1eTpjaGlpY2h1eQ=="},
+		        headers: {"withCredentials": true},
+		        xhrFields: {
+			        withCredentials: true
+			    },
+  				dataType: 'json', // Pay attention to the dataType/contentType
+			    beforeSend  : function(xhr){ 
+			    	xhr.setRequestHeader("Authentication","Basic Y2h1eTpjaGlpY2h1eQ==");
 
-	        if (!options.crossDomain) {
-		      options.crossDomain = true;
-		    }
-		    if (!options.xhrFields) {
-		      options.xhrFields = {withCredentials:true};
-		    }
-
-	        
-	        backboneSync(method, model, options);
+			    	xhr.withCredentials = true;
+			    },
+		        error: function (xhr, err) {
+		            alert(xhr.statusText);
+		        },
+		        username : "chuy",
+		        password : "chiichuy"
+		    };  
+		  
+		// I have removed the code handling emulateJSON and emulateHTTP to make this shorter  
+		  
+		    // Make the request.  
+		   // $.support.cors = true;
+		    return Backbone.ajax(params);  
 	    };
 
 		Backbone.history.start();
@@ -93,6 +117,7 @@ module.exports = Backbone.Router.extend({
 		});
 	},
 	fetchPaciente:function(){
+		console.log("fetching paciente")
 		this.pacientes.fetch();
 		console.log(this.pacientes.length);
 	},
