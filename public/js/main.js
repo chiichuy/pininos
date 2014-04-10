@@ -1,11 +1,19 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var Backbone = require('backbone'),
+    Paciente     = require('../models/paciente');
+
+module.exports = Backbone.Collection.extend({
+	model: Paciente,
+	url: 'http://dry-bastion-2612.herokuapp.com/paciente/'
+});
+},{"../models/paciente":4,"backbone":10}],2:[function(require,module,exports){
+var Backbone = require('backbone'),
     Todo     = require('../models/todo');
 
 module.exports = Backbone.Collection.extend({
 	model: Todo
 });
-},{"../models/todo":3,"backbone":8}],2:[function(require,module,exports){
+},{"../models/todo":5,"backbone":10}],3:[function(require,module,exports){
 var Backbone    = require('backbone'),
     Router      = require('./routers/router'),
     $           = require('jquery')
@@ -15,14 +23,22 @@ $(function () {
 	Backbone.app = new Router();
 });
 
-},{"./routers/router":4,"backbone":8,"jquery":26}],3:[function(require,module,exports){
+},{"./routers/router":6,"backbone":10,"jquery":28}],4:[function(require,module,exports){
+var Backbone = require('backbone');
+
+module.exports = Backbone.Model.extend({
+	urlRoot : 'http://dry-bastion-2612.herokuapp.com/paciente/'
+});
+},{"backbone":10}],5:[function(require,module,exports){
 var Backbone = require('backbone');
 
 module.exports = Backbone.Model.extend({});
-},{"backbone":8}],4:[function(require,module,exports){
+},{"backbone":10}],6:[function(require,module,exports){
 var Backbone	= require('backbone'),
 	Todos		= require('../collections/todos'),
+	Pacientes		= require('../collections/pacientes'),
 	Todo 		= require('../models/todo'),
+	Paciente 	= require('../models/paciente'),
 	TodosView 	= require('../views/todos'),
 	TodoFormView= require('../views/todoForm'),
 	$			= require('jquery');
@@ -36,14 +52,33 @@ module.exports = Backbone.Router.extend({
 		this.current = {},
 		this.jsonData = {},
 		this.todos = new Todos();
+		this.pacientes = new Pacientes();
 		this.todo = new TodosView({collection:this.todos});
 		console.log("New todo");
 		this.todoForm = new TodoFormView({collection:this.todos});
 		console.log("despues todo");
+		var backboneSync = Backbone.sync;
+	    Backbone.sync = function (method, model, options) {
+	        options.headers = {'Authorization': 'Basic ' + btoa("chuy:chiichuy")};
+	        options.header = {'Authorization': 'Basic ' + btoa("chuy:chiichuy")};
+
+	        if (!options.crossDomain) {
+		      options.crossDomain = true;
+		    }
+		    if (!options.xhrFields) {
+		      options.xhrFields = {withCredentials:true};
+		    }
+
+	        
+	        backboneSync(method, model, options);
+	    };
+
 		Backbone.history.start();
+
 	},
 	index:function(){
 		this.fetchData();
+		this.fetchPaciente();
 	},
 	test:function(name){
 		console.log(name);
@@ -57,6 +92,10 @@ module.exports = Backbone.Router.extend({
 			}
 		});
 	},
+	fetchPaciente:function(){
+		this.pacientes.fetch();
+		console.log(this.pacientes.length);
+	},
 	addTodo: function(todo){
 		this.todos.add(new Todo({
 			todo:todo,
@@ -65,7 +104,7 @@ module.exports = Backbone.Router.extend({
 	}
 
 });
-},{"../collections/todos":1,"../models/todo":3,"../views/todoForm":6,"../views/todos":7,"backbone":8,"jquery":26}],5:[function(require,module,exports){
+},{"../collections/pacientes":1,"../collections/todos":2,"../models/paciente":4,"../models/todo":5,"../views/todoForm":8,"../views/todos":9,"backbone":10,"jquery":28}],7:[function(require,module,exports){
 var Backbone   = require('backbone'),
     Handlebars = require('handlebars'),
     $          = require('jquery'),
@@ -81,7 +120,7 @@ module.exports = Backbone.View.extend({
 		return this;
 	}
 });
-},{"backbone":8,"handlebars":25,"jquery":26}],6:[function(require,module,exports){
+},{"backbone":10,"handlebars":27,"jquery":28}],8:[function(require,module,exports){
 var Backbone   	= require('backbone'),
     Handlebars 	= require('handlebars'),
     $          	= require('jquery'),
@@ -113,7 +152,7 @@ module.exports = Backbone.View.extend({
 		this.$el.append(todoView.render().el);
 	}
 });
-},{"../models/todo":3,"backbone":8,"handlebars":25,"jquery":26}],7:[function(require,module,exports){
+},{"../models/todo":5,"backbone":10,"handlebars":27,"jquery":28}],9:[function(require,module,exports){
 var Backbone   = require('backbone'),
     Handlebars = require('handlebars'),
     TodoView  = require('./todo'),
@@ -135,7 +174,7 @@ module.exports = Backbone.View.extend({
 		this.$el.prepend(todoView.render().el);
 	}
 });
-},{"./todo":5,"backbone":8,"handlebars":25,"jquery":26}],8:[function(require,module,exports){
+},{"./todo":7,"backbone":10,"handlebars":27,"jquery":28}],10:[function(require,module,exports){
 //     Backbone.js 1.1.2
 
 //     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -1745,7 +1784,7 @@ module.exports = Backbone.View.extend({
 
 }));
 
-},{"underscore":9}],9:[function(require,module,exports){
+},{"underscore":11}],11:[function(require,module,exports){
 //     Underscore.js 1.6.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -3090,9 +3129,9 @@ module.exports = Backbone.View.extend({
   }
 }).call(this);
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var Handlebars = require("./handlebars.runtime")["default"];
@@ -3130,7 +3169,7 @@ Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars.runtime":12,"./handlebars/compiler/ast":14,"./handlebars/compiler/base":15,"./handlebars/compiler/compiler":16,"./handlebars/compiler/javascript-compiler":17}],12:[function(require,module,exports){
+},{"./handlebars.runtime":14,"./handlebars/compiler/ast":16,"./handlebars/compiler/base":17,"./handlebars/compiler/compiler":18,"./handlebars/compiler/javascript-compiler":19}],14:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -3163,7 +3202,7 @@ var Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":13,"./handlebars/exception":21,"./handlebars/runtime":22,"./handlebars/safe-string":23,"./handlebars/utils":24}],13:[function(require,module,exports){
+},{"./handlebars/base":15,"./handlebars/exception":23,"./handlebars/runtime":24,"./handlebars/safe-string":25,"./handlebars/utils":26}],15:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -3396,7 +3435,7 @@ exports.log = log;var createFrame = function(object) {
   return frame;
 };
 exports.createFrame = createFrame;
-},{"./exception":21,"./utils":24}],14:[function(require,module,exports){
+},{"./exception":23,"./utils":26}],16:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -3644,7 +3683,7 @@ var AST = {
 // Must be exported as an object rather than the root of the module as the jison lexer
 // most modify the object to operate properly.
 exports["default"] = AST;
-},{"../exception":21}],15:[function(require,module,exports){
+},{"../exception":23}],17:[function(require,module,exports){
 "use strict";
 var parser = require("./parser")["default"];
 var AST = require("./ast")["default"];
@@ -3660,7 +3699,7 @@ function parse(input) {
 }
 
 exports.parse = parse;
-},{"./ast":14,"./parser":18}],16:[function(require,module,exports){
+},{"./ast":16,"./parser":20}],18:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -4131,7 +4170,7 @@ exports.precompile = precompile;function compile(input, options, env) {
 }
 
 exports.compile = compile;
-},{"../exception":21}],17:[function(require,module,exports){
+},{"../exception":23}],19:[function(require,module,exports){
 "use strict";
 var COMPILER_REVISION = require("../base").COMPILER_REVISION;
 var REVISION_CHANGES = require("../base").REVISION_CHANGES;
@@ -5128,7 +5167,7 @@ JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
 };
 
 exports["default"] = JavaScriptCompiler;
-},{"../base":13,"../exception":21}],18:[function(require,module,exports){
+},{"../base":15,"../exception":23}],20:[function(require,module,exports){
 "use strict";
 /* jshint ignore:start */
 /* Jison generated parser */
@@ -5647,7 +5686,7 @@ function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Pa
 return new Parser;
 })();exports["default"] = handlebars;
 /* jshint ignore:end */
-},{}],19:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 var Visitor = require("./visitor")["default"];
 
@@ -5791,7 +5830,7 @@ PrintVisitor.prototype.content = function(content) {
 PrintVisitor.prototype.comment = function(comment) {
   return this.pad("{{! '" + comment.comment + "' }}");
 };
-},{"./visitor":20}],20:[function(require,module,exports){
+},{"./visitor":22}],22:[function(require,module,exports){
 "use strict";
 function Visitor() {}
 
@@ -5804,7 +5843,7 @@ Visitor.prototype = {
 };
 
 exports["default"] = Visitor;
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -5833,7 +5872,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -6005,7 +6044,7 @@ exports.program = program;function invokePartial(partial, name, context, helpers
 exports.invokePartial = invokePartial;function noop() { return ""; }
 
 exports.noop = noop;
-},{"./base":13,"./exception":21,"./utils":24}],23:[function(require,module,exports){
+},{"./base":15,"./exception":23,"./utils":26}],25:[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -6017,7 +6056,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -6102,7 +6141,7 @@ exports.isEmpty = isEmpty;function appendContextPath(contextPath, id) {
 }
 
 exports.appendContextPath = appendContextPath;
-},{"./safe-string":23}],25:[function(require,module,exports){
+},{"./safe-string":25}],27:[function(require,module,exports){
 // USAGE:
 // var handlebars = require('handlebars');
 
@@ -6129,7 +6168,7 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions[".hbs"] = extension;
 }
 
-},{"../dist/cjs/handlebars":11,"../dist/cjs/handlebars/compiler/printer":19,"../dist/cjs/handlebars/compiler/visitor":20,"fs":10}],26:[function(require,module,exports){
+},{"../dist/cjs/handlebars":13,"../dist/cjs/handlebars/compiler/printer":21,"../dist/cjs/handlebars/compiler/visitor":22,"fs":12}],28:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.0
  * http://jquery.com/
@@ -15242,4 +15281,4 @@ return jQuery;
 
 }));
 
-},{}]},{},[2])
+},{}]},{},[3])
