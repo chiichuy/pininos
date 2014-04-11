@@ -1,6 +1,6 @@
 var Backbone	= require('backbone'),
 	Todos		= require('../collections/todos'),
-	Pacientes		= require('../collections/pacientes'),
+	Pacientes	= require('../collections/pacientes'),
 	Todo 		= require('../models/todo'),
 	Paciente 	= require('../models/paciente'),
 	TodosView 	= require('../views/todos'),
@@ -27,6 +27,7 @@ module.exports = Backbone.Router.extend({
 		    var modelJSON = (method === 'create' || method === 'update') ?  
 		                    JSON.stringify(model.toJSON()) : null;  
 		  
+        	var base64 = btoa("chuy" + ":" + "chiichuy");
 		    // Default JSON-request options.  
 		    var params = {  
 		     	url: model.url,  
@@ -35,23 +36,24 @@ module.exports = Backbone.Router.extend({
 			    crossDomain: true,
 			    contentType: 'application/json',
 		        async: false,
-		        headers: {"Authorization": "Basic Y2h1eTpjaGlpY2h1eQ=="},
-		        headers: {"Authentication": "Basic Y2h1eTpjaGlpY2h1eQ=="},
-		        headers: {"withCredentials": true},
-		        xhrFields: {
-			        withCredentials: true
-			    },
+				accepts:"application/json",
   				dataType: 'json', // Pay attention to the dataType/contentType
+			   	jsonp:false,
+			   	jsonpCallback:function(){
+			   		console.log("jsonp");
+			   	},
 			    beforeSend  : function(xhr){ 
-			    	xhr.setRequestHeader("Authentication","Basic Y2h1eTpjaGlpY2h1eQ==");
 
+			    	xhr.setRequestHeader("Authentication","Basic "+base64);
+			    	xhr.setRequestHeader("Authorization","Basic "+base64);
 			    	xhr.withCredentials = true;
 			    },
 		        error: function (xhr, err) {
 		            alert(xhr.statusText);
 		        },
-		        username : "chuy",
-		        password : "chiichuy"
+		        xhrFields:{
+		        	withCredentials: true
+		        }
 		    };  
 		  
 		// I have removed the code handling emulateJSON and emulateHTTP to make this shorter  
