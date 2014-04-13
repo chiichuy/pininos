@@ -4,7 +4,7 @@ var Backbone = require('backbone'),
 
 module.exports = Backbone.Collection.extend({
 	model: Paciente,
-	url: 'http://dry-bastion-2612.herokuapp.com/paciente/'
+	url: 'http://consul.herokuapp.com/paciente/'
 });
 },{"../models/paciente":4,"backbone":10}],2:[function(require,module,exports){
 var Backbone = require('backbone'),
@@ -68,35 +68,39 @@ module.exports = Backbone.Router.extend({
 		    var params = {  
 		     	url: model.url,  
 		     	data: modelJSON,
-			    type: "post",
+			    type: type,
 			    crossDomain: true,
 			    contentType: 'application/json',
-		        async: false,
 				accepts:"application/json",
-  				dataType: 'json', // Pay attention to the dataType/contentType
-			   	jsonp:false,
-			   	jsonpCallback:function(){
-			   		console.log("jsonp");
-			   	},
-			    beforeSend  : function(xhr){ 
-
-			    	xhr.setRequestHeader("Authentication","Basic "+base64);
-			    	xhr.setRequestHeader("Authorization","Basic "+base64);
-			    	xhr.withCredentials = true;
+  				dataType: 'json',
+  				jsonp: "callback",
+  				undefined:function(data){
+  					console.log("micall");
+  				},
+			    jsonpCallback: function(){
+			    	console.log("callback");
 			    },
-		        error: function (xhr, err) {
-		            alert(xhr.statusText);
-		        },
-		        xhrFields:{
-		        	withCredentials: true
-		        }
+			    success: function (data) {
+			        console.log('on success!');
+			        console.log(data);
+			    },
+			    error: function (xhr, ajaxOptions, thrownError) {
+			       console.log('on error!');
+			       console.log("xhr.status: " + xhr.status);
+			       console.log("xhr.statusText: " + xhr.statusText);
+			       console.log("xhr.readyState: " + xhr.readyState);
+			       console.log("errorThrown: " + thrownError);
+			       console.log("xhr.redirect: " + xhr.redirect);
+			    }
 		    };  
 		  
 		// I have removed the code handling emulateJSON and emulateHTTP to make this shorter  
 		  
 		    // Make the request.  
-		   // $.support.cors = true;
-		    return Backbone.ajax(params);  
+		   // $.sup^port.cors = true;
+		    return $.ajax(params).done(function(res){
+		    	console.log(this.pacientes.length);
+		    });
 	    };
 
 		Backbone.history.start();
@@ -120,8 +124,8 @@ module.exports = Backbone.Router.extend({
 	},
 	fetchPaciente:function(){
 		console.log("fetching paciente")
-		this.pacientes.fetch();
-		console.log(this.pacientes.length);
+		console.log(this.pacientes.fetch());
+		
 	},
 	addTodo: function(todo){
 		this.todos.add(new Todo({

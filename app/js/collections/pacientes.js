@@ -3,5 +3,5 @@ var Backbone = require('backbone'),
 
 module.exports = Backbone.Collection.extend({
 	model: Paciente,
-	url: 'http://dry-bastion-2612.herokuapp.com/paciente/'
+	url: 'http://consul.herokuapp.com/paciente/'
 });
