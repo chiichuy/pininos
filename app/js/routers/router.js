@@ -21,9 +21,22 @@ module.exports = Backbone.Router.extend({
 		console.log("New todo");
 		this.todoForm = new TodoFormView({collection:this.todos});
 		console.log("despues todo");
-	    Backbone.sync = function (method, model) {
+	    /*Backbone.sync = function (method, model) {
 	        var basic = 'Basic  ' + btoa("chuy:chiichuy");
-	       	var type = method; 
+	        var type = method; 
+	        switch(method){
+	        	case 'create':
+	        		type = 'POST';
+	        		break;
+	        	case 'read':
+	        		type = 'GET';
+	        		break;
+
+	        	case 'update':
+	        		type = 'PUT';
+	        		break;
+	        }
+	       	
 		    var modelJSON = (method === 'create' || method === 'update') ?  
 		                    JSON.stringify(model.toJSON()) : null;  
 		  
@@ -33,45 +46,21 @@ module.exports = Backbone.Router.extend({
 		     	url: model.url,  
 		     	data: modelJSON,
 			    type: type,
-			    crossDomain: true,
-			    contentType: 'application/json',
-				accepts:"application/json",
   				dataType: 'json',
-  				jsonp: "callback",
-  				undefined:function(data){
-  					console.log("micall");
-  				},
-			    jsonpCallback: function(){
-			    	console.log("callback");
-			    },
-			    success: function (data) {
-			        console.log('on success!');
-			        console.log(data);
-			    },
-			    error: function (xhr, ajaxOptions, thrownError) {
-			       console.log('on error!');
-			       console.log("xhr.status: " + xhr.status);
-			       console.log("xhr.statusText: " + xhr.statusText);
-			       console.log("xhr.readyState: " + xhr.readyState);
-			       console.log("errorThrown: " + thrownError);
-			       console.log("xhr.redirect: " + xhr.redirect);
-			    }
 		    };  
 		  
 		// I have removed the code handling emulateJSON and emulateHTTP to make this shorter  
 		  
 		    // Make the request.  
 		   // $.sup^port.cors = true;
-		    return $.ajax(params).done(function(res){
-		    	console.log(this.pacientes.length);
-		    });
-	    };
+		    return $.ajax(params);
+	    };*/
 
 		Backbone.history.start();
 
 	},
 	index:function(){
-		this.fetchData();
+		//this.fetchData();
 		this.fetchPaciente();
 	},
 	test:function(name){
@@ -88,7 +77,14 @@ module.exports = Backbone.Router.extend({
 	},
 	fetchPaciente:function(){
 		console.log("fetching paciente")
-		console.log(this.pacientes.fetch());
+		var self = this;
+		var x = this.pacientes.fetch();
+		x.done(function(){
+			var pacientes = self.pacientes.toJSON();
+        	for(var i=0;i<pacientes.length;i++){
+        		self.addTodo(pacientes[i].nombre);
+			}
+		});
 		
 	},
 	addTodo: function(todo){
