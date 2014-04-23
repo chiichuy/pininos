@@ -21,6 +21,14 @@ module.exports = Backbone.Router.extend({
 		console.log("New todo");
 		this.todoForm = new TodoFormView({collection:this.todos});
 		console.log("despues todo");
+
+		var sync = Backbone.sync;
+		Backbone.sync = function(method,model,options){
+			options.headers = {
+				'Authorization' : 'Bearer a0ffa788583cfbdc8b1d24e59597d28b40ecdd40'
+			};
+			return sync(method,model,options);
+		};
 	    /*Backbone.sync = function (method, model) {
 	        var basic = 'Basic  ' + btoa("chuy:chiichuy");
 	        var type = method; 
@@ -78,11 +86,12 @@ module.exports = Backbone.Router.extend({
 	fetchPaciente:function(){
 		console.log("fetching paciente")
 		var self = this;
-		var x = this.pacientes.fetch();
-		x.done(function(){
-			var pacientes = self.pacientes.toJSON();
-        	for(var i=0;i<pacientes.length;i++){
-        		self.addTodo(pacientes[i].nombre);
+		var x = this.pacientes.fetch({
+			success: function(){
+				var pacientes = self.pacientes.toJSON();
+	        	for(var i=0;i<pacientes.length;i++){
+	        		self.addTodo(pacientes[i].nombre);
+				}
 			}
 		});
 		
